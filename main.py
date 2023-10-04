@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import csv
 
 url_site = "https://klubsadprof.ru"
 url="https://klubsadprof.ru/catalog/rozy/"
@@ -47,6 +48,70 @@ for i in url_str:
 print(res_spisok_tovar)
 
 
+
+for i in res_spisok_tovar:
+    def cat_name(url, url_site, category_name):
+        # Use a breakpoint in the code line below to debug your script.
+        page = requests.get(url)
+        soup = BeautifulSoup(page.text, "html.parser")
+        try:
+            h1 = soup.find('h1', class_='product-detail-title').text
+            print(h1.strip())
+        except:
+            h1="Заголовок"
+        try:
+            article = soup.find('div', class_='product-detail-prop').text
+            article = article.strip().replace('Артикул:', '').strip()
+            if "Наличие" in article:
+                article = ""
+        except:
+            article = ""
+
+        try:
+            content = soup.find('div', class_='product-description-cover')
+            content = content.find('div', class_='tab-active')
+        except:
+            content = ""
+        # print(content)
+        try:
+            img = soup.find('div', class_='swiper-wrapper')
+            img = img.findAll('img')
+            imgall = []
+            for i in img:
+                imgall.append(url_site + i.get("src"))
+        except:
+            imgall = ""
+        try:
+            price = soup.find('span', class_='product-item-price')
+            price = price.text.replace(' ₽', '')
+        except:
+            price = ""
+        category_name = "Каталог|" + category_name
+        data = {'cat': category_name, 'img': imgall, 'title': h1, 'h1': h1, 'price': price,
+                'content': content ,'article':article}
+        return data
+
+
+    def write_csv(data):
+        my_string = '|'.join(data['img']),
+        my_string = str(my_string)
+        my_string = my_string.replace("('","")
+        my_string = my_string.replace("',)","")
+        print(str(my_string))
+        with open(category_name + '.csv', 'a', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file, delimiter=';')
+            writer.writerow((data['cat'],
+                             data['title'],
+                             data['h1'],
+                             data['price'],
+                             my_string,
+                             data['content'],
+                             data['article'],
+                             ))
+
+
+    data = cat_name(i, url_site, category_name)
+    write_csv(data)
 
 
 
