@@ -3,8 +3,8 @@ import requests
 import csv
 
 url_site = "https://klubsadprof.ru"
-url="https://klubsadprof.ru/catalog/rozy/"
-kol_str = 11
+url="https://klubsadprof.ru/catalog/zemlyanika-sadovaya/"
+kol_str = 5
 kol_str = kol_str + 1
 
 
@@ -24,7 +24,7 @@ def caturl_str(url):
     url_str = []
     url_str.append(url)
     for i in range(2, kol_str):
-        url_str_link="https://klubsadprof.ru/catalog/rozy/?PAGEN_2=" + str(i) +"#top_catalog"
+        url_str_link=url + "?PAGEN_2=" + str(i) +"#top_catalog"
         url_str.append(url_str_link)
     return url_str
 url_str = caturl_str(url)
